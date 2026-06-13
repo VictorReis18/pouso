@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+
+    container_name: pouso-postgres
+
+    environment:
+      POSTGRES_DB: pouso
+      POSTGRES_USER: pouso
+      POSTGRES_PASSWORD: pouso123
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - pouso_data:/var/lib/postgresql/data
+
+volumes:
+  pouso_data:

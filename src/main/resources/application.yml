@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: pouso
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pouso
+    username: pouso
+    password: pouso123
+
+  flyway:
+    enabled: true
