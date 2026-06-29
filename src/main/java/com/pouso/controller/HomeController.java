@@ -11,9 +11,6 @@ public class HomeController {
     @GetMapping("/home") //remover o home
     public String home(HttpSession session, Model model) {
         String cpf = (String) session.getAttribute("cpf");
-        if (cpf == null) {
-            return "redirect:/login";
-        }
         model.addAttribute("cpf", cpf);
         return "home";
     }
