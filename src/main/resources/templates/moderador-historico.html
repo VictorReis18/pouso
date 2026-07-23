@@ -10,20 +10,37 @@
     <div layout:fragment="content">
 
         <div class="row cross-center gap margin-bottom wrap">
-            <button type="button" class="border round">
+            <button type="button" class="border round" data-ui="#categoria-menu">
                 <i>category</i>
-                <span>Categoria</span>
+                <span th:text="${categoriaSelecionada != null ? categoriaSelecionada : 'Categoria'}">Categoria</span>
                 <i>arrow_drop_down</i>
             </button>
+            <menu id="categoria-menu">
+                <a th:href="@{/moderador/historico}" th:classappend="${categoriaSelecionada == null} ? 'active'">
+                    <i>apps</i>
+                    <span>Todas</span>
+                </a>
+                <a th:each="cat : ${categorias}"
+                   th:href="@{/moderador/historico(categoria=${cat})}"
+                   th:classappend="${cat == categoriaSelecionada} ? 'active'"
+                   th:text="${cat}">Cachorro</a>
+            </menu>
             <div class="space"></div>
             <span class="chip border" th:text="${#lists.size(historico)} + ' registro(s)'">Label</span>
+            <a href="/moderador/solicitacoes">
+                <button type="button" class="border round">
+                    <i>pending_actions</i>
+                    <span>Ver solicitações</span>
+                </button>
+            </a>
         </div>
 
         <h4 class="margin-bottom">Histórico de Aprovações/Reprovações</h4>
 
         <div th:if="${#lists.isEmpty(historico)}" class="center-align padding extra">
             <i class="extra large-text grey-text">history</i>
-            <p class="grey-text">Nenhum registro no histórico ainda.</p>
+            <p class="grey-text" th:if="${categoriaSelecionada != null}" th:text="'Nenhum registro no histórico para ' + ${categoriaSelecionada} + '.'">Nenhum registro no histórico para essa categoria.</p>
+            <p class="grey-text" th:unless="${categoriaSelecionada != null}">Nenhum registro no histórico ainda.</p>
         </div>
 
         <div th:each="item : ${historico}"

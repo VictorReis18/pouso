@@ -28,14 +28,17 @@ public class ModeradorController {
     }
 
     @GetMapping("/moderador/solicitacoes")
-    public String solicitacoes(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+    public String solicitacoes(@RequestParam(required = false) String categoria,
+                                HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         if (acessoNegado(session)) {
             redirectAttributes.addFlashAttribute("error", "Acesso restrito a moderadores.");
             return "redirect:/login";
         }
 
         model.addAttribute("isModerador", true);
-        model.addAttribute("solicitacoes", petRepository.listarPendentes());
+        model.addAttribute("categorias", petRepository.listarCategorias());
+        model.addAttribute("categoriaSelecionada", categoria);
+        model.addAttribute("solicitacoes", petRepository.listarPendentes(categoria));
         return "moderador-solicitacoes";
     }
 
@@ -63,14 +66,17 @@ public class ModeradorController {
         return "redirect:/moderador/solicitacoes";
     }
     @GetMapping("/moderador/historico")
-public String historico(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-    if (acessoNegado(session)) {
-        redirectAttributes.addFlashAttribute("error", "Acesso restrito a moderadores.");
-        return "redirect:/login";
-    }
+    public String historico(@RequestParam(required = false) String categoria,
+                             HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (acessoNegado(session)) {
+            redirectAttributes.addFlashAttribute("error", "Acesso restrito a moderadores.");
+            return "redirect:/login";
+        }
 
-    model.addAttribute("isModerador", true);
-    model.addAttribute("historico", petRepository.listarHistorico());
-    return "moderador-historico";
-}
+        model.addAttribute("isModerador", true);
+        model.addAttribute("categorias", petRepository.listarCategorias());
+        model.addAttribute("categoriaSelecionada", categoria);
+        model.addAttribute("historico", petRepository.listarHistorico(categoria));
+        return "moderador-historico";
+    }
 }

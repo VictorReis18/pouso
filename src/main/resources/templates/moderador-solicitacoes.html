@@ -10,20 +10,37 @@
     <div layout:fragment="content">
 
         <div class="row cross-center gap margin-bottom wrap">
-            <button type="button" class="border round">
+            <button type="button" class="border round" data-ui="#categoria-menu">
                 <i>category</i>
-                <span>Categoria</span>
+                <span th:text="${categoriaSelecionada != null ? categoriaSelecionada : 'Categoria'}">Categoria</span>
                 <i>arrow_drop_down</i>
             </button>
+            <menu id="categoria-menu">
+                <a th:href="@{/moderador/solicitacoes}" th:classappend="${categoriaSelecionada == null} ? 'active'">
+                    <i>apps</i>
+                    <span>Todas</span>
+                </a>
+                <a th:each="cat : ${categorias}"
+                   th:href="@{/moderador/solicitacoes(categoria=${cat})}"
+                   th:classappend="${cat == categoriaSelecionada} ? 'active'"
+                   th:text="${cat}">Cachorro</a>
+            </menu>
             <div class="space"></div>
             <span class="chip border" th:text="${#lists.size(solicitacoes)} + ' pendente(s)'">Label</span>
+            <a href="/moderador/historico">
+                <button type="button" class="border round">
+                    <i>history</i>
+                    <span>Ver histórico</span>
+                </button>
+            </a>
         </div>
 
         <h4 class="margin-bottom">Solicitações Pendentes</h4>
 
         <div th:if="${#lists.isEmpty(solicitacoes)}" class="center-align padding extra">
             <i class="extra large-text grey-text">inbox</i>
-            <p class="grey-text">Nenhuma solicitação pendente no momento.</p>
+            <p class="grey-text" th:if="${categoriaSelecionada != null}" th:text="'Nenhuma solicitação pendente para ' + ${categoriaSelecionada} + '.'">Nenhuma solicitação pendente para essa categoria.</p>
+            <p class="grey-text" th:unless="${categoriaSelecionada != null}">Nenhuma solicitação pendente no momento.</p>
         </div>
 
         <div th:each="solicitacao : ${solicitacoes}"

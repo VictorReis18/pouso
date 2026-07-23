@@ -1,0 +1,263 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+    <title>Minhas Adoções</title>
+</head>
+<body>
+
+    <div layout:fragment="content">
+
+        <div class="row cross-center gap margin-bottom wrap">
+            <h4 class="max">Minhas Adoções</h4>
+            <div class="row gap">
+                <button type="button" class="border round" disabled title="Em breve">
+                    <i>family_home</i>
+                    <span>Adoções</span>
+                </button>
+                <button type="button" class="fill round">
+                    <i>check</i>
+                    <span>Solicitações</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Solicitações realizadas -->
+        <h6 class="margin-bottom">Solicitações realizadas</h6>
+
+        <div th:if="${#lists.isEmpty(solicitacoesRealizadas)}" class="center-align padding extra">
+            <i class="extra large-text grey-text">inbox</i>
+            <p class="grey-text">Você ainda não solicitou nenhuma adoção.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(solicitacoesRealizadas)}">
+            <div class="grid margin-bottom">
+                <div class="s4"><strong>Animal</strong></div>
+                <div class="s4"><strong>Responsável</strong></div>
+                <div class="s4"><strong>Status</strong></div>
+            </div>
+
+            <div th:each="solicitacao : ${solicitacoesRealizadas}" class="grid cross-center padding-small margin-bottom" style="border-bottom: 1px solid var(--outline-variant);">
+
+                <div class="s4 row gap cross-center">
+                    <img th:if="${solicitacao.fotoPet != null}"
+                         th:src="${solicitacao.fotoPet}"
+                         class="round" style="width: 64px; height: 64px; object-fit: cover;"
+                         alt="Foto do pet">
+                    <div th:unless="${solicitacao.fotoPet != null}"
+                         class="round primary-container center-align middle-align" style="width: 64px; height: 64px;">
+                        <i>pets</i>
+                    </div>
+                    <div>
+                        <p th:text="${solicitacao.titulo}">Cachorro</p>
+                        <p class="small-text grey-text"
+                           th:text="${solicitacao.racaNome} + ' - ' + ${solicitacao.idadeDescricao} + ' - ' + ${solicitacao.porteDescricao}">Raça - idade - porte</p>
+                        <button type="button" class="small border round" th:attr="data-ui='#pet-' + ${solicitacao.idHtml}">
+                            <i>more_horiz</i>
+                            <span>Ver detalhes</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="s4 row gap cross-center">
+                    <div class="circle primary-container center-align middle-align" style="width: 56px; height: 56px;">
+                        <i>person</i>
+                    </div>
+                    <div>
+                        <p th:text="${solicitacao.donoNome}">Responsável</p>
+                        <p th:if="${solicitacao.donoEndereco != null}" class="small-text grey-text" th:text="${solicitacao.donoEndereco}">Endereço</p>
+                        <button type="button" class="small border round" th:attr="data-ui='#pessoa-' + ${solicitacao.idHtml}">
+                            <i>more_horiz</i>
+                            <span>Ver detalhes</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="s4">
+                    <p class="small-text grey-text row middle-align gap-small">
+                        <i class="small">hourglass_empty</i>
+                        <span th:if="${solicitacao.aguardandoResposta}">Aguardando resposta do responsável</span>
+                        <span th:unless="${solicitacao.aguardandoResposta}" th:text="${solicitacao.status}">Status</span>
+                    </p>
+                    <button type="button" class="small border round" th:attr="data-ui='#adocao-' + ${solicitacao.idHtml}">
+                        <i>more_horiz</i>
+                        <span>Ver adoção</span>
+                    </button>
+                </div>
+
+                <dialog th:id="'pet-' + ${solicitacao.idHtml}" class="left-align" style="max-width: 60%; width: 100%; padding: 24px;">
+                    <h5 th:text="${solicitacao.petNome}">Rex</h5>
+                    <img th:if="${solicitacao.fotoPet != null}" th:src="${solicitacao.fotoPet}" class="responsive round"
+                         style="max-height: 280px; object-fit: cover; width: 100%;" alt="Foto do pet">
+                    <div class="grid margin-top">
+                        <div class="s6"><p class="grey-text small-text">Espécie</p><p th:text="${solicitacao.titulo}">Cachorro</p></div>
+                        <div class="s6"><p class="grey-text small-text">Raça</p><p th:text="${solicitacao.racaNome}">Labrador</p></div>
+                        <div class="s6"><p class="grey-text small-text">Sexo</p><p th:text="${solicitacao.sexoDescricao}">Macho</p></div>
+                        <div class="s6"><p class="grey-text small-text">Porte</p><p th:text="${solicitacao.porteDescricao}">Médio</p></div>
+                        <div class="s6"><p class="grey-text small-text">Idade</p><p th:text="${solicitacao.idadeDescricao}">2 anos</p></div>
+                        <div class="s6"><p class="grey-text small-text">Castrado</p><p th:text="${solicitacao.isCastrado != null and solicitacao.isCastrado ? 'Sim' : 'Não'}">Sim</p></div>
+                        <div class="s6"><p class="grey-text small-text">Data de nascimento</p><p th:text="${solicitacao.dataNascFormatada}">10/05/2023</p></div>
+                        <div class="s12"><p class="grey-text small-text">Sobre o pet</p><p th:text="${solicitacao.bio}">Cachorro dócil, adora brincar</p></div>
+                    </div>
+                    <nav class="right-align margin-top">
+                        <button type="button" class="border" th:attr="data-ui='#pet-' + ${solicitacao.idHtml}">Fechar</button>
+                    </nav>
+                </dialog>
+
+                <dialog th:id="'pessoa-' + ${solicitacao.idHtml}" class="left-align" style="max-width: 40%; width: 100%; padding: 24px;">
+                    <h5 th:text="${solicitacao.donoNome}">Responsável</h5>
+                    <div class="grid margin-top">
+                        <div class="s12"><p class="grey-text small-text">CPF</p><p th:text="${solicitacao.cpfDono}">000.000.000-00</p></div>
+                        <div class="s12">
+                            <p class="grey-text small-text">Endereço</p>
+                            <p th:if="${solicitacao.donoEndereco != null}" th:text="${solicitacao.donoEndereco}">Rua, nº</p>
+                            <p th:unless="${solicitacao.donoEndereco != null}" class="grey-text">Endereço não informado</p>
+                        </div>
+                    </div>
+                    <nav class="right-align margin-top">
+                        <button type="button" class="border" th:attr="data-ui='#pessoa-' + ${solicitacao.idHtml}">Fechar</button>
+                    </nav>
+                </dialog>
+
+                <dialog th:id="'adocao-' + ${solicitacao.idHtml}" class="left-align" style="max-width: 40%; width: 100%; padding: 24px;">
+                    <h5>Solicitação de adoção</h5>
+                    <div class="grid margin-top">
+                        <div class="s12"><p class="grey-text small-text">Animal</p><p th:text="${solicitacao.petNome}">Rex</p></div>
+                        <div class="s12"><p class="grey-text small-text">Responsável</p><p th:text="${solicitacao.donoNome}">Responsável</p></div>
+                        <div class="s12"><p class="grey-text small-text">Solicitado em</p><p th:text="${solicitacao.dataSolicitacaoFormatada}">01/07/2026</p></div>
+                        <div class="s12">
+                            <p class="grey-text small-text">Status</p>
+                            <p th:if="${solicitacao.aguardandoResposta}">Aguardando resposta do responsável</p>
+                            <p th:unless="${solicitacao.aguardandoResposta}" th:text="${solicitacao.status}">Status</p>
+                        </div>
+                    </div>
+                    <nav class="right-align margin-top">
+                        <button type="button" class="border" th:attr="data-ui='#adocao-' + ${solicitacao.idHtml}">Fechar</button>
+                    </nav>
+                </dialog>
+
+            </div>
+        </div>
+
+        <!-- Solicitado para mim -->
+        <h6 class="margin-top margin-bottom">Solicitado para mim</h6>
+
+        <div th:if="${#lists.isEmpty(solicitacoesRecebidas)}" class="center-align padding extra">
+            <i class="extra large-text grey-text">inbox</i>
+            <p class="grey-text">Você ainda não recebeu nenhuma solicitação.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(solicitacoesRecebidas)}">
+            <div class="grid margin-bottom">
+                <div class="s4"><strong>Animal</strong></div>
+                <div class="s4"><strong>Solicitante</strong></div>
+                <div class="s4"><strong>Status</strong></div>
+            </div>
+
+            <div th:each="solicitacao : ${solicitacoesRecebidas}" class="grid cross-center padding-small margin-bottom" style="border-bottom: 1px solid var(--outline-variant);">
+
+                <div class="s4 row gap cross-center">
+                    <img th:if="${solicitacao.fotoPet != null}"
+                         th:src="${solicitacao.fotoPet}"
+                         class="round" style="width: 64px; height: 64px; object-fit: cover;"
+                         alt="Foto do pet">
+                    <div th:unless="${solicitacao.fotoPet != null}"
+                         class="round primary-container center-align middle-align" style="width: 64px; height: 64px;">
+                        <i>pets</i>
+                    </div>
+                    <div>
+                        <p th:text="${solicitacao.titulo}">Cachorro</p>
+                        <p class="small-text grey-text"
+                           th:text="${solicitacao.racaNome} + ' - ' + ${solicitacao.idadeDescricao} + ' - ' + ${solicitacao.porteDescricao}">Raça - idade - porte</p>
+                        <button type="button" class="small border round" th:attr="data-ui='#pet-r-' + ${solicitacao.idHtml}">
+                            <i>more_horiz</i>
+                            <span>Ver detalhes</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="s4 row gap cross-center">
+                    <div class="circle primary-container center-align middle-align" style="width: 56px; height: 56px;">
+                        <i>person</i>
+                    </div>
+                    <div>
+                        <p th:text="${solicitacao.adotanteNome}">Solicitante</p>
+                        <p th:if="${solicitacao.adotanteEndereco != null}" class="small-text grey-text" th:text="${solicitacao.adotanteEndereco}">Endereço</p>
+                        <button type="button" class="small border round" th:attr="data-ui='#pessoa-r-' + ${solicitacao.idHtml}">
+                            <i>more_horiz</i>
+                            <span>Ver detalhes</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="s4">
+                    <p class="small-text grey-text row middle-align gap-small">
+                        <i class="small">hourglass_empty</i>
+                        <span th:if="${solicitacao.aguardandoResposta}">Aguardando resposta do responsável</span>
+                        <span th:unless="${solicitacao.aguardandoResposta}" th:text="${solicitacao.status}">Status</span>
+                    </p>
+                    <button type="button" class="small border round" th:attr="data-ui='#adocao-r-' + ${solicitacao.idHtml}">
+                        <i>more_horiz</i>
+                        <span>Ver adoção</span>
+                    </button>
+                </div>
+
+                <dialog th:id="'pet-r-' + ${solicitacao.idHtml}" class="left-align" style="max-width: 60%; width: 100%; padding: 24px;">
+                    <h5 th:text="${solicitacao.petNome}">Rex</h5>
+                    <img th:if="${solicitacao.fotoPet != null}" th:src="${solicitacao.fotoPet}" class="responsive round"
+                         style="max-height: 280px; object-fit: cover; width: 100%;" alt="Foto do pet">
+                    <div class="grid margin-top">
+                        <div class="s6"><p class="grey-text small-text">Espécie</p><p th:text="${solicitacao.titulo}">Cachorro</p></div>
+                        <div class="s6"><p class="grey-text small-text">Raça</p><p th:text="${solicitacao.racaNome}">Labrador</p></div>
+                        <div class="s6"><p class="grey-text small-text">Sexo</p><p th:text="${solicitacao.sexoDescricao}">Macho</p></div>
+                        <div class="s6"><p class="grey-text small-text">Porte</p><p th:text="${solicitacao.porteDescricao}">Médio</p></div>
+                        <div class="s6"><p class="grey-text small-text">Idade</p><p th:text="${solicitacao.idadeDescricao}">2 anos</p></div>
+                        <div class="s6"><p class="grey-text small-text">Castrado</p><p th:text="${solicitacao.isCastrado != null and solicitacao.isCastrado ? 'Sim' : 'Não'}">Sim</p></div>
+                        <div class="s6"><p class="grey-text small-text">Data de nascimento</p><p th:text="${solicitacao.dataNascFormatada}">10/05/2023</p></div>
+                        <div class="s12"><p class="grey-text small-text">Sobre o pet</p><p th:text="${solicitacao.bio}">Cachorro dócil, adora brincar</p></div>
+                    </div>
+                    <nav class="right-align margin-top">
+                        <button type="button" class="border" th:attr="data-ui='#pet-r-' + ${solicitacao.idHtml}">Fechar</button>
+                    </nav>
+                </dialog>
+
+                <dialog th:id="'pessoa-r-' + ${solicitacao.idHtml}" class="left-align" style="max-width: 40%; width: 100%; padding: 24px;">
+                    <h5 th:text="${solicitacao.adotanteNome}">Solicitante</h5>
+                    <div class="grid margin-top">
+                        <div class="s12"><p class="grey-text small-text">CPF</p><p th:text="${solicitacao.cpfAdotante}">000.000.000-00</p></div>
+                        <div class="s12">
+                            <p class="grey-text small-text">Endereço</p>
+                            <p th:if="${solicitacao.adotanteEndereco != null}" th:text="${solicitacao.adotanteEndereco}">Rua, nº</p>
+                            <p th:unless="${solicitacao.adotanteEndereco != null}" class="grey-text">Endereço não informado</p>
+                        </div>
+                    </div>
+                    <nav class="right-align margin-top">
+                        <button type="button" class="border" th:attr="data-ui='#pessoa-r-' + ${solicitacao.idHtml}">Fechar</button>
+                    </nav>
+                </dialog>
+
+                <dialog th:id="'adocao-r-' + ${solicitacao.idHtml}" class="left-align" style="max-width: 40%; width: 100%; padding: 24px;">
+                    <h5>Solicitação de adoção</h5>
+                    <div class="grid margin-top">
+                        <div class="s12"><p class="grey-text small-text">Animal</p><p th:text="${solicitacao.petNome}">Rex</p></div>
+                        <div class="s12"><p class="grey-text small-text">Solicitante</p><p th:text="${solicitacao.adotanteNome}">Solicitante</p></div>
+                        <div class="s12"><p class="grey-text small-text">Solicitado em</p><p th:text="${solicitacao.dataSolicitacaoFormatada}">01/07/2026</p></div>
+                        <div class="s12">
+                            <p class="grey-text small-text">Status</p>
+                            <p th:if="${solicitacao.aguardandoResposta}">Aguardando resposta do responsável</p>
+                            <p th:unless="${solicitacao.aguardandoResposta}" th:text="${solicitacao.status}">Status</p>
+                        </div>
+                    </div>
+                    <nav class="right-align margin-top">
+                        <button type="button" class="border" th:attr="data-ui='#adocao-r-' + ${solicitacao.idHtml}">Fechar</button>
+                    </nav>
+                </dialog>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

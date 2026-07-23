@@ -1,6 +1,7 @@
 package com.pouso.controller;
 
 import com.pouso.model.Person;
+import com.pouso.repository.AdministradorRepository;
 import com.pouso.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     private final AuthService authService;
+    private final AdministradorRepository administradorRepository;
 
-    public LoginController(AuthService authService) {
+    public LoginController(AuthService authService, AdministradorRepository administradorRepository) {
         this.authService = authService;
+        this.administradorRepository = administradorRepository;
     }
 
     @GetMapping("/login")
@@ -34,6 +37,10 @@ public class LoginController {
 
         if (person != null) {
             session.setAttribute("cpf", person.getCPF());
+
+            if (administradorRepository.isAdministrador(person.getCPF())) {
+                return "redirect:/moderador/solicitacoes";
+            }
             return "redirect:/home";
         }
 
